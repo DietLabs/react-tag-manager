@@ -41,6 +41,7 @@ export class Click extends React.Component {
       children,
       onClick,
       event,
+      GTM,
       ...props
     } = this.props
 
