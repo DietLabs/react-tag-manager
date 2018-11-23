@@ -1,8 +1,16 @@
 import { canUseDom } from './helpers'
 
-export const loadScript = ({ id, auth, preview }, dataLayerName, loadCallback) => {
-  const script = document.createElement('SCRIPT')
+const hasScriptWithSrc = (src) => {
+  const scripts = document.getElementsByTagName('script')
+  for (let i = 0; i < scripts.length; i += 1) {
+    if (scripts[i].src === src) {
+      return true
+    }
+  }
+  return false
+}
 
+export const loadScript = ({ id, auth, preview }, dataLayerName, loadCallback) => {
   let src = `https://www.googletagmanager.com/gtm.js?id=${id}`
   if (auth) {
     src += `&gtm_auth=${auth}`
@@ -12,6 +20,13 @@ export const loadScript = ({ id, auth, preview }, dataLayerName, loadCallback) =
     src += `&gtm_preview=${preview}`
   }
 
+  if (hasScriptWithSrc(src)) {
+    window[dataLayerName] = window[dataLayerName] || [];
+    loadCallback();
+    return
+  }
+
+  const script = document.createElement('SCRIPT')
   script.async = true
   script.src = src
 
